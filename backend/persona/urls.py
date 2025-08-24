@@ -1,0 +1,37 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("details/", views.DetailListCreate.as_view(),
+         name="details-list"),
+    path("details/<int:pk>/", views.DetailRetrieveUpdateDestroy.as_view(),
+         name="detail"),
+    path("personas/", views.PersonaListCreate.as_view(),
+         name="personas-list"),
+    path("personas/<int:pk>/", views.PersonaRetrieveUpdateDestroy.as_view(),
+         name="persona"),
+    path("persona-detail/", views.PersonaDetailCreate.as_view(),
+         name="persona-detail-add"),
+    path("persona-details/<int:pk>/", views.PersonaDetailsList.as_view(),
+         name="persona-detail"),
+    path("unassigned-details/<int:pk>/",
+         views.PersonaDetailsUnassigned.as_view(),
+         name="unassigned-details"),
+    path("persona-details/delete/<int:persona_pk>/<int:detail_pk>/",
+         views.PersonaDetailDelete.as_view(),
+         name="persona-detail-delete"),
+    path("persona/<int:pk>/", views.PersonaDetails.as_view(),
+         name="persona"),
+    path('personas/<int:pk>/generate-api-key/',
+         views.GeneratePersonaAPIKey.as_view(),
+         name='generate-persona-api-key'),
+    path('personas/api-keys/<int:pk>/',
+         views.APIKeysList.as_view(),
+         name="api-keys-list"),
+    path('personas/api-keys-delete/<int:pk>/',
+         views.APIKeysDestroy.as_view(),
+         name='delete-api-keys'),
+    path('personas/api-key-delete/<str:prefix>/',
+         views.APIKeyDestroy.as_view(),
+         name='delete-api-key')
+]

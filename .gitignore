@@ -1,0 +1,20 @@
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Node modules
+node_modules/
+
+# Build / OS / editor junk
+dist/
+build/
+.DS_Store
+*.log
+.vscode/
+.idea/
+
