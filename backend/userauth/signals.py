@@ -21,7 +21,7 @@ def create_default_details_for_user(sender, instance, created, **kwargs):
             'email': {'type': 'String', 'value': ''},
             'job': {'type': 'String', 'value': ''},
             'gender': {'type': 'String', 'value': ''},
-            'profile_picture': {'type': 'Image', 'value': "default-profile.jpg"}
+            'profile_picture': {'type': 'Image', 'value': "default-pic.jpg"}
         }
 
         for key_name, config in default_details_config.items():

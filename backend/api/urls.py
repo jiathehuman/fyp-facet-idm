@@ -8,7 +8,7 @@ from django.urls import path, include
 from userauth.views import (CreateUserView, check_user_exists,
                             post_login_redirect, GoogleSocialAuthView,
                             UserProfileView, EthereumAuthView,
-                            ThrottledTokenObtainPairView)
+                            ThrottledTokenObtainPairView, delete_account)
 # Views that allow us to get access and refresh token
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
@@ -41,6 +41,7 @@ urlpatterns = [
     # Custom Views for the app
     path('user/profile/', UserProfileView.as_view(), name='user-profile'),
     path("user/register/", CreateUserView.as_view(), name="register"),
+    path("api/delete-account/", delete_account, name="delete-account"),
 
     # Main functionality of the app
     path("api/", include("persona.urls")),

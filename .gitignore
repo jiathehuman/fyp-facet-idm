@@ -7,6 +7,10 @@ __pycache__/
 venv/
 env/
 
+# Backend stuff
+backend/media/user_details_files/*
+backend/media/user_details_photos/*
+
 # Node modules
 node_modules/
 
