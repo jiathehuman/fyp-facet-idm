@@ -13,13 +13,12 @@ export default function DocsPage() {
                     <p className="text-justify mt-5">Facets is a powerful <span className="text-violet-600 font-bold">meta-database</span> that transforms the way you <span className="text-violet-600 font-bold">manage</span> and <span className="text-violet-600 font-bold">share</span> information. With Facets, you can design dynamic <span className="text-violet-600 font-bold">personas</span> that represent the precise you would like to show an audience. </p>
                     <p className="text-justify my-5"> Seamlessly <span className="text-violet-600 font-bold">control access</span> by exposing these personas only to authorized clients, ensuring both security and personalisation at scale. Facets provides a trusted foundation for structured, secure, and intelligent personal-information sharing.</p>
                     <h2 className={title()}>Steps</h2>
-                    <div>
+                    <div className="mt-10">
                         <Stepper
                             initialStep={1}
                             onStepChange={(step) => {
                                 console.log(step);
-                            }}
-                            onFinalStepCompleted={() => {navigate('/register')}}
+                            }} onFinalStepCompleted={() => {navigate('/register')}}
                             backButtonText="Previous"
                             nextButtonText="Next"
                         >

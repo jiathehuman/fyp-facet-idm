@@ -69,7 +69,7 @@ export default function LoginPage() {
     try {
       const result = await handleGoogleLogin(response);
       if (result.user) {
-        navigate("/");
+        navigate("/dashboard");
       } else {
         console.error(
           "Google login is successful but user data is not returned",
@@ -110,7 +110,7 @@ export default function LoginPage() {
       const res = await api.post("/user/token/", { username, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err: any) {
       if (isAxiosError(err) && err.response) {
         // If HTTP Too Many Requests is the HTTP Status

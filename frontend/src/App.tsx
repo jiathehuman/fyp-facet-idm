@@ -28,7 +28,7 @@ function App() {
             <DashboardPage />
           </SecureRoute>
         }
-        path="/"
+        path="/dashboard"
       />
       {/* Route to a specific persona */}
       <Route

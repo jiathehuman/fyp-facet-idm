@@ -21,8 +21,7 @@ import { Tooltip } from "@heroui/tooltip";
 import { Button } from "@heroui/button";
 
 import RenderPersonaDetailValue from "@/components/RenderPersonaDetailValue.tsx";
-//@ts-ignore
-
+// @ts-ignore
 import { subtitle, title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import {
@@ -41,42 +40,29 @@ import { DeleteIcon, PlusIcon } from "@/components/icons.tsx";
 
 export default function PersonaPage() {
   const { id } = useParams();
+  const personaId = String(id || "");
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
   const [persona, setPersona] = useState<Persona | null>(null);
   const [details, setDetails] = useState<PersonaDetail[] | null>(null);
   const [apiKeys, setApiKeys] = useState<APIKey[] | null>(null);
-  const [unassignedDetails, setUnassignedDetails] =
-    useState<PersonaDetail[] | null>(null);
+  const [unassignedDetails, setUnassignedDetails] = useState<PersonaDetail[] | null>(null);
+
+  // newly generated raw key (only shown once)
+  const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [copyLabel, setCopyLabel] = useState<"Copy" | "Copied!">("Copy");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleOpen = () => {
-    onOpen();
-  };
-
-  const fetchPersona = async (id: string) => {
+  // ---------- Fetchers ----------
+  const fetchPersona = async (pid: string) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getPersona(id);
-
-      data ? setPersona(data) : setPersona(null);
-    } catch (err: any) {
-      // Check if it is an Axios error
-      handleError(err, setError);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPersonaDetails = async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getPersonaDetails(id);
-
-      data ? setDetails(data) : setDetails(null);
+      const data = await getPersona(pid);
+      setPersona(data ?? null);
     } catch (err: any) {
       handleError(err, setError);
     } finally {
@@ -84,13 +70,12 @@ export default function PersonaPage() {
     }
   };
 
-  const fetchUnassignedDetails = async (id: string) => {
+  const fetchPersonaDetails = async (pid: string) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getUnassignedPersonaDetails(id);
-
-      data ? setUnassignedDetails(data) : setUnassignedDetails(null);
+      const data = await getPersonaDetails(pid);
+      setDetails(data ?? null);
     } catch (err: any) {
       handleError(err, setError);
     } finally {
@@ -98,17 +83,43 @@ export default function PersonaPage() {
     }
   };
 
+  const fetchUnassignedDetails = async (pid: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getUnassignedPersonaDetails(pid);
+      setUnassignedDetails(data ?? null);
+    } catch (err: any) {
+      handleError(err, setError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAPIKeys = async (pid: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAPIKeys(pid);
+      setApiKeys(data ?? null);
+    } catch (err: any) {
+      handleError(err, setError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------- Mutations ----------
   const handleAddDetail = async (detail: Detail) => {
     setLoading(true);
     setError(null);
-    const formData = new FormData();
-
-    formData.append("persona", String(id));
-    formData.append("detail", detail.id);
     try {
+      const formData = new FormData();
+      formData.append("persona", personaId);
+      formData.append("detail", detail.id);
       await createPersonaDetail(formData);
-      await fetchPersonaDetails(String(id));
-      await fetchUnassignedDetails(String(id));
+      await fetchPersonaDetails(personaId);
+      await fetchUnassignedDetails(personaId);
     } catch (err: any) {
       handleError(err, setError);
     } finally {
@@ -120,23 +131,9 @@ export default function PersonaPage() {
     setLoading(true);
     setError(null);
     try {
-      await deletePersonaDetail(id, detail.id);
-      await fetchPersonaDetails(String(id));
-      await fetchUnassignedDetails(String(id));
-    } catch (err: any) {
-      handleError(err, setError);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAPIKeys = async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getAPIKeys(id);
-
-      data ? setApiKeys(data) : setApiKeys(null);
+      await deletePersonaDetail(personaId, detail.id);
+      await fetchPersonaDetails(personaId);
+      await fetchUnassignedDetails(personaId);
     } catch (err: any) {
       handleError(err, setError);
     } finally {
@@ -148,14 +145,40 @@ export default function PersonaPage() {
     setLoading(true);
     setError(null);
     try {
-      const newKey = await createAPIKey(String(id));
+      // Accept any shape; your console showed res.data.api_key
+      const newKey: any = await createAPIKey(personaId);
 
-      console.log(newKey);
-      await fetchAPIKeys(String(id));
+      const raw =
+        (newKey && (newKey.api_key || newKey.key || newKey.token || null)) ?? null;
+
+      if (raw) {
+        setGeneratedKey(raw); // flips modal content to show/copy the key
+        setCopyLabel("Copy");
+      } else {
+        console.error("Create API key response missing raw key:", newKey);
+        setGeneratedKey(null);
+        setError(
+          "Backend did not return the raw API key. Ensure the create endpoint includes `api_key` (or `key`) once."
+        );
+      }
+
+      // Refresh table (lists only prefixes & metadata)
+      await fetchAPIKeys(personaId);
     } catch (err: any) {
       handleError(err, setError);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const copyKey = async () => {
+    if (!generatedKey) return;
+    try {
+      await navigator.clipboard.writeText(generatedKey);
+      setCopyLabel("Copied!");
+      setTimeout(() => setCopyLabel("Copy"), 1500);
+    } catch {
+      setCopyLabel("Copy");
     }
   };
 
@@ -164,7 +187,7 @@ export default function PersonaPage() {
     setError(null);
     try {
       await deleteAPIKey(prefix);
-      await fetchAPIKeys(String(id));
+      await fetchAPIKeys(personaId);
     } catch (err: any) {
       handleError(err, setError);
     } finally {
@@ -172,72 +195,110 @@ export default function PersonaPage() {
     }
   };
 
+  // ---------- Effects ----------
   useEffect(() => {
-    if (id) {
-      fetchPersona(id);
-      fetchPersonaDetails(id);
-      fetchUnassignedDetails(id);
-      fetchUnassignedDetails(id);
-      fetchAPIKeys(id);
-    }
-  }, []);
+    if (!id) return;
+    fetchPersona(personaId);
+    fetchPersonaDetails(personaId);
+    fetchUnassignedDetails(personaId);
+    fetchAPIKeys(personaId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
     <DefaultLayout>
-      <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
+      {/* Generate API Key Modal */}
+      <Modal isOpen={isOpen} size="md" onClose={onClose}>
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Generate API Key
+                {generatedKey ? "Your new API Key" : "Generate API Key"}
               </ModalHeader>
-              <ModalBody>
-                <p>
-                  Generate an API Key. Only provide this API Key to outside
-                  clients you trust. This API Key will grant them access to this
-                  persona. Enjoy!
-                </p>
-                <p>
-                  Access persona at: http://127.0.0.1:8000/api/persona/{id} with
-                  this key
-                </p>
+
+              <ModalBody className="space-y-3">
+                {!generatedKey ? (
+                  <>
+                    <p>
+                      Generate an API Key. Only share this API key with trusted clients.
+                      It grants access to this persona.
+                    </p>
+                    <p>
+                      Access persona at:{" "}
+                      <code>http://127.0.0.1:8000/api/persona/{id}</code> using this key.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm">
+                      This key is shown <strong>only once</strong>. Store it securely now.
+                    </p>
+                    <div className="rounded-md border p-3 font-mono text-sm break-all">
+                      {generatedKey}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" onPress={copyKey}>
+                        {copyLabel}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        onPress={() => setGeneratedKey(null)}
+                      >
+                        Hide key
+                      </Button>
+                    </div>
+                  </>
+                )}
               </ModalBody>
+
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={() => {
+                    setGeneratedKey(null);
+                    onClose();
+                  }}
+                >
                   Close
                 </Button>
-                <Button color="primary" onPress={generateAPIKey}>
-                  Generate
-                </Button>
+                {!generatedKey && (
+                  <Button color="primary" onPress={generateAPIKey}>
+                    Generate
+                  </Button>
+                )}
               </ModalFooter>
             </>
           )}
         </ModalContent>
       </Modal>
+
       {loading ? (
         <Spinner />
       ) : error ? (
         <div>{error}</div>
       ) : (
         <>
+          {/* Header */}
           <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
             <div className="inline-block max-w-lg text-center justify-center">
-              <h1 className={title()}>
-                <span>{persona && persona.key} </span>Persona
-              </h1>
+              <h1 className={`${title()} mt-3`}>Persona</h1>
               <p>
                 Created on:{" "}
                 {persona &&
-                  new Date(persona.created_at).toLocaleString("en-UK", {
+                  new Date(persona.created_at).toLocaleString("en-GB", {
                     dateStyle: "short",
                     timeStyle: "short",
                   })}
               </p>
             </div>
           </section>
-          <section>
+
+          {/* Assigned Details */}
+          <section className="pb-10">
             <p className={title({ size: "sm" })}>Assigned Details.</p>
-            {details ? (
+            {details && details.length > 0 ? (
               <Table aria-label="Assigned details table">
                 <TableHeader>
                   <TableColumn>DETAIL NAME</TableColumn>
@@ -245,23 +306,20 @@ export default function PersonaPage() {
                   <TableColumn>ACTIONS</TableColumn>
                 </TableHeader>
                 <TableBody>
-                  {/*@ts-ignore*/}
+                  {/* @ts-ignore */}
                   {details.map((detail: Detail) => (
                     <TableRow key={detail.id}>
                       <TableCell>
                         {detail.key
                           .split("_")
-                          .map(
-                            (word: string) =>
-                              word.charAt(0).toUpperCase() + word.slice(1),
-                          )
+                          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
                           .join(" ")}
                       </TableCell>
                       <TableCell>
                         <RenderPersonaDetailValue detail={detail} />
                       </TableCell>
                       <TableCell>
-                        <Tooltip content="Add detail to persona">
+                        <Tooltip content="Remove detail from persona">
                           <button
                             className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             onClick={() => handleUnassignDetail(detail)}
@@ -276,17 +334,19 @@ export default function PersonaPage() {
               </Table>
             ) : (
               <div>
-                <p className={subtitle()}>No Unassigned Detail.</p>
+                <p className={subtitle()}>No Assigned Details.</p>
               </div>
             )}
           </section>
-          <section>
+
+          {/* API Keys */}
+          <section className="pb-10">
             <p className={title({ size: "sm" })}>API Keys.</p>
-            {apiKeys ? (
-              <Table aria-label="Assigned details table">
+            {apiKeys && apiKeys.length > 0 ? (
+              <Table aria-label="API keys table">
                 <TableHeader>
                   <TableColumn>DESCRIPTION</TableColumn>
-                  <TableColumn>KEY</TableColumn>
+                  <TableColumn>KEY PREFIX</TableColumn>
                   <TableColumn>CREATED ON</TableColumn>
                   <TableColumn>ACTIONS</TableColumn>
                 </TableHeader>
@@ -294,10 +354,15 @@ export default function PersonaPage() {
                   {apiKeys.map((apiKey: APIKey) => (
                     <TableRow key={apiKey.id}>
                       <TableCell>{apiKey.description}</TableCell>
-                      <TableCell>{apiKey.api_key}</TableCell>
-                      <TableCell>{apiKey.created_at}</TableCell>
+                      <TableCell>{apiKey.prefix}</TableCell>
                       <TableCell>
-                        <Tooltip content="Add detail to persona">
+                        {new Date(apiKey.created_at).toLocaleString("en-GB", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip content="Delete API key">
                           <button
                             className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             onClick={() => handleDeleteAPIKey(apiKey.prefix)}
@@ -312,16 +377,20 @@ export default function PersonaPage() {
               </Table>
             ) : (
               <div>
-                <p className={subtitle()}>Generate API keys.</p>
+                <p className={subtitle()}>
+                  No API Keys. Generate one to share with a client.
+                </p>
               </div>
             )}
-            <Button onPress={() => handleOpen()}>
+            <Button onPress={onOpen} className="mt-5">
               <p>Add API Key</p>
             </Button>
           </section>
+
+          {/* Unassigned Details */}
           <section>
             <p className={title({ size: "sm" })}>Unassigned Details.</p>
-            {unassignedDetails ? (
+            {unassignedDetails && unassignedDetails.length > 0 ? (
               <Table aria-label="Unassigned details table">
                 <TableHeader>
                   <TableColumn>DETAIL NAME</TableColumn>
@@ -329,16 +398,13 @@ export default function PersonaPage() {
                   <TableColumn>ACTIONS</TableColumn>
                 </TableHeader>
                 <TableBody>
-                  {/*@ts-ignore*/}
+                  {/* @ts-ignore */}
                   {unassignedDetails.map((detail: Detail) => (
                     <TableRow key={detail.id}>
                       <TableCell>
                         {detail.key
                           .split("_")
-                          .map(
-                            (word: string) =>
-                              word.charAt(0).toUpperCase() + word.slice(1),
-                          )
+                          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
                           .join(" ")}
                       </TableCell>
                       <TableCell>
@@ -360,7 +426,7 @@ export default function PersonaPage() {
               </Table>
             ) : (
               <div>
-                <p className={subtitle()}>No Unassigned Detail.</p>
+                <p className={subtitle()}>No Unassigned Details.</p>
               </div>
             )}
           </section>

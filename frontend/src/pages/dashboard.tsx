@@ -1,3 +1,4 @@
+import { title } from "@/components/primitives";
 import React, { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { Avatar } from "@heroui/avatar";
@@ -307,7 +308,8 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      {/* <h1 className="text-3xl font-bold mb-6">Dashboard</h1> */}
+      <h1 className={title()}>Dashboard</h1>
 
       {/* Profile image and name section */}
       <div className="mb-8 flex flex-col items-center">
@@ -414,7 +416,7 @@ export default function DashboardPage() {
       </div>
 
       <hr className="my-8" />
-
+      <h3 className={title({size:"sm"})}>Details</h3>
       <Table aria-label="Details table">
         <TableHeader>
           <TableColumn>DETAIL NAME</TableColumn>
@@ -460,7 +462,8 @@ export default function DashboardPage() {
 
       <hr className="my-8" />
 
-      <Table aria-label="Your details table">
+      <h3 className={title({size:"sm"})}>Personas</h3>
+      <Table aria-label="Your personas table">
         <TableHeader>
           <TableColumn>PERSONA</TableColumn>
           <TableColumn>CREATED AT</TableColumn>

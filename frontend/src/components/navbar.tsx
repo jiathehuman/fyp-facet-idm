@@ -18,8 +18,14 @@ import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
   const location = useLocation();
-  const isIndexPage = location.pathname === '/home';
-  const isRegisterOrLoginPage = (location.pathname === '/login' || location.pathname === '/register')
+
+  console.log(location.pathname)
+  // const isIndexPage = location.pathname === '/';
+  // const isRegisterOrLoginPage = (location.pathname === '/login' || location.pathname === '/register')
+
+  const isPage = (paths: string[]): boolean => {
+    return paths.includes(location.pathname);
+  };
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
@@ -42,7 +48,7 @@ export const Navbar = () => {
         justify="end"
       >
 
-        {isIndexPage && <NavbarItem className="md:flex">
+        {isPage(["/", "/login", "/about"]) && <NavbarItem className="md:flex">
           <Button
             as={Link}
             className="text-sm font-normal text-default-600 bg-default-100"
@@ -52,7 +58,8 @@ export const Navbar = () => {
             Login
           </Button>
         </NavbarItem>}
-        {!isIndexPage && !isRegisterOrLoginPage && <NavbarItem className="md:flex">
+        {/* {!isIndexPage && !isRegisterOrLoginPage && <NavbarItem className="md:flex"> */}
+        {!isPage(["/", "/register", "/login", "/about"]) && <NavbarItem className="md:flex">
           <Button
             as={Link}
             className="text-sm font-normal text-default-600 bg-default-100"
