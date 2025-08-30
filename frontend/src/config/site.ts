@@ -67,6 +67,7 @@ export const siteConfig = {
     login: "/login",
     register: "/register",
     persona: "/persona/:id",
-    logout: "/logout"
+    logout: "/logout",
+    about: "/about"
   },
 };

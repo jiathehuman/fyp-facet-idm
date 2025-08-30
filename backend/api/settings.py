@@ -17,8 +17,7 @@ env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = """django-insecure-p02dd8ff65j@w@92=
-qhom020oh97g-t&uh&2m-u+r#k)(+y)st"""
+SECRET_KEY = """django-insecure-p02dd8ff65j@w@92=qhom020oh97g-t&uh&2m-u+r#k)(+y)st"""
 
 DEBUG = True
 

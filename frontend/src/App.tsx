@@ -5,6 +5,7 @@ import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import DashboardPage from "@/pages/dashboard";
 import PersonaPage from "@/pages/persona";
+import DocsPage from "@/pages/about";
 import SecureRoute from "@/components/SecureRoute";
 
 function Logout() {
@@ -16,7 +17,8 @@ function Logout() {
 function App() {
   return (
     <Routes>
-      <Route element={<IndexPage />} path="/home" />
+      <Route element={<IndexPage />} path="/" />
+      <Route element={<DocsPage/>} path="/about"/>
       <Route element={<LoginPage />} path="/login" />
       <Route element={<RegisterPage />} path="/register" />
       {/* Route to the user dashboard */}
