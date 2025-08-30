@@ -62,6 +62,7 @@ export default function PersonaPage() {
     setError(null);
     try {
       const data = await getPersona(pid);
+      console.log(data)
       setPersona(data ?? null);
     } catch (err: any) {
       handleError(err, setError);
@@ -224,7 +225,7 @@ export default function PersonaPage() {
                       It grants access to this persona.
                     </p>
                     <p>
-                      Access persona at:{" "}
+                      Access persona at:
                       <code>http://127.0.0.1:8000/api/persona/{id}</code> using this key.
                     </p>
                   </>
@@ -283,7 +284,7 @@ export default function PersonaPage() {
           {/* Header */}
           <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
             <div className="inline-block max-w-lg text-center justify-center">
-              <h1 className={`${title()} mt-3`}>Persona</h1>
+              <h1 className={`${title()} mt-3`}>{persona?.key} Persona</h1>
               <p>
                 Created on:{" "}
                 {persona &&

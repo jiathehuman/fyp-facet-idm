@@ -10,7 +10,7 @@ export default function DocsPage() {
             <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
                 <div className="inline-block max-w-lg text-center justify-center">
                     <h1 className={title()}>How it works</h1>
-                    <p className="text-justify mt-5">Facets is a powerful <span className="text-violet-600 font-bold">meta-database</span> that transforms the way you <span className="text-violet-600 font-bold">manage</span> and <span className="text-violet-600 font-bold">share</span> information. With Facets, you can design dynamic <span className="text-violet-600 font-bold">personas</span> that represent the precise you would like to show an audience. </p>
+                    <p className="text-justify mt-5">Facets is a powerful <span className="text-violet-600 font-bold">identity management platform</span> that transforms the way you <span className="text-violet-600 font-bold">manage</span> and <span className="text-violet-600 font-bold">share</span> personal information. With Facets, you can design dynamic <span className="text-violet-600 font-bold">personas</span> that represent the precise 'You' that you would like to show an audience. </p>
                     <p className="text-justify my-5"> Seamlessly <span className="text-violet-600 font-bold">control access</span> by exposing these personas only to authorized clients, ensuring both security and personalisation at scale. Facets provides a trusted foundation for structured, secure, and intelligent personal-information sharing.</p>
                     <h2 className={title()}>Steps</h2>
                     <div className="mt-10">

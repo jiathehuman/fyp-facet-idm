@@ -113,6 +113,7 @@ export default function LoginPage() {
       navigate("/dashboard");
     } catch (err: any) {
       if (isAxiosError(err) && err.response) {
+        // ************************************ Throttling ********************************************** //
         // If HTTP Too Many Requests is the HTTP Status
         if (err.response.status === 429) {
           // Try both lowercase and uppercase

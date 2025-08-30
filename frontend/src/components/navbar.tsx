@@ -48,7 +48,7 @@ export const Navbar = () => {
         justify="end"
       >
 
-        {isPage(["/", "/login", "/about"]) && <NavbarItem className="md:flex">
+        {isPage(["/", "/register", "/about"]) && <NavbarItem className="md:flex">
           <Button
             as={Link}
             className="text-sm font-normal text-default-600 bg-default-100"

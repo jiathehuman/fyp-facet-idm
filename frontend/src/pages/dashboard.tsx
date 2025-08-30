@@ -417,7 +417,7 @@ export default function DashboardPage() {
 
       <hr className="my-8" />
       <h3 className={title({size:"sm"})}>Details</h3>
-      <Table aria-label="Details table">
+      <Table aria-label="Details table" className="mt-5">
         <TableHeader>
           <TableColumn>DETAIL NAME</TableColumn>
           <TableColumn>DETAIL VALUE</TableColumn>
@@ -463,7 +463,7 @@ export default function DashboardPage() {
       <hr className="my-8" />
 
       <h3 className={title({size:"sm"})}>Personas</h3>
-      <Table aria-label="Your personas table">
+      <Table aria-label="Your personas table" className="mt-5">
         <TableHeader>
           <TableColumn>PERSONA</TableColumn>
           <TableColumn>CREATED AT</TableColumn>
