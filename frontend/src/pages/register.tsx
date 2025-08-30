@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { siteConfig } from "@/config/site";
 // @ts-ignore
 import { isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -230,12 +229,6 @@ export default function RegisterPage() {
                 <Button color="primary" size="sm" onPress={onMetamaskConnect}>
                   Register with Ethereum Wallet
                 </Button>
-                  <p className="mt-5">
-                    Have an account?
-                    <span className="text-primary ml-2">
-                      <a href={siteConfig.links.login}>Login</a>
-                    </span>
-                  </p>
               </Form>
             </CardBody>
           </Card>

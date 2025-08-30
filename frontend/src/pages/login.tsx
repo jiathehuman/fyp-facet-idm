@@ -194,10 +194,10 @@ export default function LoginPage() {
                   Login with Ethereum Wallet
                 </Button>
                 <p className="mt-5">
-                  Not a user?
-                  <span className="text-primary ml-2">
-                    <a href={siteConfig.links.register}>Register </a>
-                  </span>
+                  Not a user?{" "}
+                  <span className="text-primary">
+                    <a href={siteConfig.links.register}>Register</a>
+                  </span>{" "}
                   with us.
                 </p>
               </Form>
