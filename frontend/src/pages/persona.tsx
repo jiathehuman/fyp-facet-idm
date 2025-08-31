@@ -196,6 +196,39 @@ export default function PersonaPage() {
     }
   };
 
+  // @ts-ignore
+  const ExportCSV = ({ data, fileName = "data.csv" }) => {
+  const downloadCSV = () => {
+    const headers = Object.keys(data[0]).join(","); // get column headers
+    // @ts-ignore
+    const rows = data.map(row => Object.values(row).join(","));
+    const csvContent = [headers, ...rows].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", fileName);
+    link.click();
+  };
+
+  return <Button onPress={downloadCSV}>Download CSV</Button>
+};
+
+
+// @ts-ignore
+const ExportJSON = ({ data, fileName = "data.json" }) => {
+  const downloadJSON = () => {
+    const jsonContent = JSON.stringify(data, null, 2); // pretty print
+    const blob = new Blob([jsonContent], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", fileName);
+    link.click();
+  };
+
+  return <Button onPress={downloadJSON}>Download JSON</Button>;
+};
+
   // ---------- Effects ----------
   useEffect(() => {
     if (!id) return;
@@ -203,7 +236,6 @@ export default function PersonaPage() {
     fetchPersonaDetails(personaId);
     fetchUnassignedDetails(personaId);
     fetchAPIKeys(personaId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return (
@@ -431,6 +463,10 @@ export default function PersonaPage() {
               </div>
             )}
           </section>
+          <div className="flex gap-3 my-5">
+            <ExportJSON data={details}/>
+            <ExportCSV data={details}/>
+          </div>
         </>
       )}
     </DefaultLayout>
