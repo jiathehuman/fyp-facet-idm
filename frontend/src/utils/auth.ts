@@ -137,7 +137,7 @@ export const handleMetaMaskLogin = async (
 
       // Navigate only if successful
       if (navigate) {
-        navigate("/");
+        navigate("/dashboard");
       }
 
       return { success: true, user };

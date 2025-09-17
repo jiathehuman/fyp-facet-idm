@@ -15,6 +15,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from django.db import IntegrityError
+import logging
+
 # Message signing and verification
 from eth_account.messages import encode_defunct
 from eth_account import Account
@@ -23,6 +26,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+
+logger = logging.getLogger(__name__)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -40,9 +45,18 @@ def check_user_exists(request):
     email = request.query_params.get("email")
     if not email:
         return Response({"error": "Email required"}, status=400)
-
-    exists = User.objects.get(email=email).exists()
+    exists = User.objects.filter(email=email).exists()
     return Response({"exists": exists})
+
+
+# @api_view(["GET"])
+# def check_user_exists(request):
+#     email = request.query_params.get("email")
+#     if not email:
+#         return Response({"error": "Email required"}, status=400)
+
+#     exists = User.objects.get(email=email).exists()
+#     return Response({"exists": exists})
 
 
 @login_required
@@ -71,6 +85,7 @@ class GoogleSocialAuthView(APIView):
     throttle_classes = [AnonRateThrottle]
     authentication_classes = []
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def post(self, request):
 
@@ -174,7 +189,9 @@ class GoogleSocialAuthView(APIView):
                 },
                 status=status.HTTP_200_OK
             )
-
+        except IntegrityError as e:
+            logger.exception("Integrity Error during Google auth")
+            return Response({"detail": f"DB integrity error: {e}"}, status=500)
         except ValueError as e:
             """Catch exception where Google ID is invalid"""
             return Response(
@@ -193,6 +210,7 @@ class EthereumAuthView(APIView):
     """Ethereum Social Login"""
     throttle_classes = [AnonRateThrottle]
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         wallet_address = request.data.get('wallet_address')
@@ -265,6 +283,7 @@ class EthereumAuthView(APIView):
             user.save()
             print(f"New Django User created for wallet: {user.wallet_address}")
 
+        # After creating or accessing user
         # Step One: Generate and return JWT for frontend -----------------------------------
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)

@@ -9,6 +9,7 @@ import { Select, SelectItem } from "@heroui/select";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
+import DefaultLayout from "@/layouts/default";
 import { Card, CardHeader, CardBody } from "@heroui/card";
 import {
   Table,
@@ -307,6 +308,7 @@ export default function DashboardPage() {
   }
 
   return (
+    <DefaultLayout>
     <div className="p-4">
       {/* <h1 className="text-3xl font-bold mb-6">Dashboard</h1> */}
       <h1 className={title()}>Dashboard</h1>
@@ -560,5 +562,6 @@ export default function DashboardPage() {
         </ModalContent>
       </Modal>
     </div>
+    </DefaultLayout>
   );
 }
