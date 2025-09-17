@@ -144,7 +144,7 @@ WSGI_APPLICATION = "api.wsgi.application"
 
 DATABASE_URL = os.getenv("DB_URL")  # expect a full URL here in local dev
 if DATABASE_URL:
-    default_db = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
+    default_db = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=False)
 else:
     # Solid fallback if env var is missing
     default_db = {
