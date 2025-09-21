@@ -1,8 +1,9 @@
 import { Button } from "@heroui/button";
 import { useLocation } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
+import api from "@/api";
 import { Link } from "@heroui/link";
-
+import { ACCESS_TOKEN } from "@/constants";
 import {
   Navbar as HeroUINavbar,
   NavbarBrand,
@@ -12,12 +13,28 @@ import {
 
 
 import { siteConfig } from "@/config/site";
-
+import { HomeLink } from "./HomeLink";
 import { Logo } from "@/components/icons";
 
 
 export const Navbar = () => {
   const location = useLocation();
+    const navigate = useNavigate();
+
+    const onClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+
+      const access = localStorage.getItem(ACCESS_TOKEN);
+      if (!access) return navigate("/");
+
+      try {
+        await api.get("/auth/me");
+        navigate("/dashboard");
+      } catch {
+        navigate("/");
+      }
+    };
+
 
   console.log(location.pathname)
   // const isIndexPage = location.pathname === '/';
@@ -31,7 +48,11 @@ export const Navbar = () => {
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand className="gap-3 max-w-fit">
-          <Link
+          <HomeLink>
+            <Logo/>
+            <p className="font-bold text-inherit">FACETS <span> - An Identity Management Platform </span></p>
+          </HomeLink>
+          {/* <Link
             className="flex justify-start items-center gap-1"
             color="foreground"
             href="/"
@@ -39,7 +60,7 @@ export const Navbar = () => {
             <Logo />
 
             <p className="font-bold text-inherit">FACETS <span> - An Identity Management Platform </span></p>
-          </Link>
+          </Link> */}
         </NavbarBrand>
       </NavbarContent>
 

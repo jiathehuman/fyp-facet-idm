@@ -7,6 +7,7 @@ import { CredentialResponse } from "@react-oauth/google";
 import api from "../api";
 
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants";
+import { useNavigate } from "react-router-dom";
 
 // Global Type declarations
 declare global {
@@ -118,6 +119,7 @@ export const handleMetaMaskLogin = async (
     console.log("Signature:", signature);
 
     try {
+      console.log("Posting to backend in handleMetaMaskLogin (auth.ts)")
       // Send to backend for authentication
       const apiResponse = await api.post<AuthResponse>("/auth/ethereum/", {
         wallet_address: account,

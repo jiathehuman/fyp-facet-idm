@@ -213,6 +213,7 @@ class EthereumAuthView(APIView):
     authentication_classes = []
 
     def post(self, request):
+        print("Ethereum social login called")
         wallet_address = request.data.get('wallet_address')
         signature = request.data.get('signature')
         message = request.data.get('message')
@@ -325,7 +326,7 @@ class UserProfileView(APIView):
 
 
 class ThrottledTokenObtainPairView(TokenObtainPairView):
-    """THrottle token"""
+    """Issues a pair of JWT tokens (Access and refresh) in exchange for credentials"""
     permission_classes = [AllowAny]              # allow unauthenticated login attempts
     throttle_classes = [ScopedRateThrottle]     # Throttle such that they cannot spam login
     throttle_scope = 'login'

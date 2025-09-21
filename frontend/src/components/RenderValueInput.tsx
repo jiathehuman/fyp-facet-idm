@@ -26,7 +26,7 @@ const RenderValueInput: React.FC<RenderValueInputProps> = ({
                     type="text"
                     value={detailString}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDetailString(e.target.value)}
-                    placeholder="Eg. Hobby"
+                    placeholder="Enter text"
                     required
                 />
             );

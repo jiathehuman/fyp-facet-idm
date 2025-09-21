@@ -15,6 +15,7 @@ class DetailSerializer(serializers.ModelSerializer):
     Serialize from JSON to Django querysets for Detail instance and vice versa
     """
     current_value = serializers.SerializerMethodField()
+    image_value = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Detail
@@ -26,8 +27,9 @@ class DetailSerializer(serializers.ModelSerializer):
         Reference: https://www.django-rest-framework.org/api-guide/serializers/
         Format the key
         """
-        format_string = '-'.join(word.capitalize() for word in value.split())
-        return format_string
+        # format_string = '-'.join(word.capitalize() for word in value.split())
+        return '_'.join(value.strip().split()).lower()
+        # return format_string
 
     def get_current_value(self, obj):
         """

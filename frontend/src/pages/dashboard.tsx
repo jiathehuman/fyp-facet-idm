@@ -1,4 +1,5 @@
 import { title } from "@/components/primitives";
+import Loading from "@/components/Loading";
 import React, { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { Avatar } from "@heroui/avatar";
@@ -11,6 +12,7 @@ import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
 import DefaultLayout from "@/layouts/default";
 import { Card, CardHeader, CardBody } from "@heroui/card";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 import {
   Table,
   TableHeader,
@@ -42,6 +44,7 @@ import {
   updateDetail,
 } from "@/utils/data";
 import { handleError } from "@/utils/utilityFunctions.ts";
+import DeleteAccountButton from "@/components/DeleteAccountButton";
 
 type DetailValueType = "String" | "Date" | "File" | "Image" | "";
 
@@ -113,14 +116,32 @@ export default function DashboardPage() {
   };
 
   const fetchProfile = () => {
-    const profilePictureDetail = details.find(
-      (detail) =>
-        detail.key.toLowerCase() === "profile_picture" &&
-        detail.value_type.toLowerCase() === "image",
-    );
-    const profileImageUrl = profilePictureDetail?.image_value;
+    // const profilePictureDetail = details.find(
+    //   (d) =>
+    //     // detail.key.toLowerCase() === "profile_picture" &&
+    //     // detail.value_type.toLowerCase() === "image",
+    //   d.key.replace(/[-\s]/g, '_').toLowerCase() === 'profile_picture' &&
+    //   d.value_type.toLowerCase() === 'image'
+    // );
 
-    setProfileImageUrl(profileImageUrl);
+    const profilePictureDetail = details.find(
+    d =>
+      d.key.replace(/[-\s]/g, "_").toLowerCase() === "profile_picture" && // normalize
+      d.value_type.toLowerCase() === "image"
+);
+    // const profileImageUrl = profilePictureDetail?.image_value;
+
+    // setProfileImageUrl(profileImageUrl);
+
+
+    const buildImageUrl = (u?: string | null) => {
+      if (!u) return "";
+      const abs = u.startsWith("http") ? u : `${API_BASE_URL}${u}`;
+      return `${abs}?t=${Date.now()}`; // forces a fresh fetch after every update
+    };
+
+    // in fetchProfile()
+    setProfileImageUrl(buildImageUrl(profilePictureDetail?.image_value));
 
     const nameDetail = details.find(
       (detail) =>
@@ -300,7 +321,7 @@ export default function DashboardPage() {
   };
 
   if (loading) {
-    return <div>Loading data...</div>;
+    return <div><Loading/></div>;
   }
 
   if (error) {
@@ -419,7 +440,7 @@ export default function DashboardPage() {
 
       <hr className="my-8" />
       <h3 className={title({size:"sm"})}>Details</h3>
-      <Table aria-label="Details table" className="mt-5">
+      <Table aria-label="Details table" className="my-5">
         <TableHeader>
           <TableColumn>DETAIL NAME</TableColumn>
           <TableColumn>DETAIL VALUE</TableColumn>
@@ -465,7 +486,7 @@ export default function DashboardPage() {
       <hr className="my-8" />
 
       <h3 className={title({size:"sm"})}>Personas</h3>
-      <Table aria-label="Your personas table" className="mt-5">
+      <Table aria-label="Your personas table" className="mt-5 mb-8">
         <TableHeader>
           <TableColumn>PERSONA</TableColumn>
           <TableColumn>CREATED AT</TableColumn>
@@ -505,6 +526,8 @@ export default function DashboardPage() {
           ))}
         </TableBody>
       </Table>
+
+      <DeleteAccountButton/>
 
       <Modal
         isOpen={isEditModalOpen}

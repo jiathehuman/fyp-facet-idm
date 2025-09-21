@@ -14,6 +14,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,8 +28,7 @@ urlpatterns = [
 
     # Library to authenticate with JWT
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
-    path('dj-rest-auth/registration/',
-         include('dj_rest_auth.registration.urls')),
+    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
 
     # Reference: https://allauth.org/
     # AllAuth is an authentication solution for Django framework
@@ -45,6 +45,9 @@ urlpatterns = [
 
     # Main functionality of the app
     path("api/", include("persona.urls")),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),  # JSON/YAML schema
+    path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

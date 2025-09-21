@@ -59,6 +59,10 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.facebook",
 
+    "drf_spectacular",                # provides the templates (e.g., swagger_ui.html)
+    "drf_spectacular_sidecar",        # provides Swagger UI/Redoc assets (recommended)
+
+
     # Custom applications
     "userauth",
     "persona",
@@ -93,6 +97,12 @@ REST_FRAMEWORK = {
         'high': '500/day',
         'low': '50/day'
     },
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "My API",
+    "VERSION": "1.0.0",
 }
 
 SIMPLE_JWT = {

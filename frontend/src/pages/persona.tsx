@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Spinner } from "@heroui/spinner";
+import Loading from "@/components/Loading";
 import {
   Table,
   TableHeader,
@@ -308,7 +309,8 @@ const ExportJSON = ({ data, fileName = "data.json" }) => {
       </Modal>
 
       {loading ? (
-        <Spinner />
+        // <Spinner />
+        <Loading/>
       ) : error ? (
         <div>{error}</div>
       ) : (

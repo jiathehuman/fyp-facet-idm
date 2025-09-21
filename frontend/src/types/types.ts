@@ -10,7 +10,6 @@ export interface Detail {
   image_value: string | null;
   string_value: string | null;
   key: string;
-  // Gonna change this later
   value_type: "String" | "Date" | "File" | "Image";
   user: string;
 }

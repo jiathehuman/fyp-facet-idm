@@ -320,3 +320,13 @@ export const handleLogout = (navigate: NavigateFunction): void => {
   localStorage.removeItem("user");
   navigate("/login");
 };
+
+// api/delete-account/
+export const deleteAccount = async (): Promise<void> => {
+  const res = await api.delete("/api/delete-account/");
+  // Your view returns 204 (no content) with a message in body — some servers still include JSON.
+  // Treat 2xx as success.
+  if (!(res.status >= 200 && res.status < 300)) {
+    throw new Error("Failed to delete account");
+  }
+};

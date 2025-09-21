@@ -96,6 +96,7 @@ export default function LoginPage() {
   // Callback for login with Metamask
   const onMetamaskConnect = async () => {
     setLoading(true);
+    console.log("onMetamaskConnect called")
     await handleMetaMaskLogin(navigate); // Pass navigate as an argument
     setLoading(false);
   };

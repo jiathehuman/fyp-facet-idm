@@ -17,7 +17,11 @@ from rest_framework import status
 from .permissions import HasPersonaAPIKey  # custom permission
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework.throttling import UserRateThrottle
+
 from django.shortcuts import get_object_or_404
+
+from rest_framework import parsers
 
 
 class DetailListCreate(generics.ListCreateAPIView):
@@ -27,6 +31,7 @@ class DetailListCreate(generics.ListCreateAPIView):
     """
     serializer_class = DetailSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
         # Get the user object accessing the route
@@ -47,11 +52,18 @@ class DetailRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     """
     serializer_class = DetailSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = (parsers.MultiPartParser, parsers.FormParser)
+
+    # def get_queryset(self):
+    #     # Get the user object accessing the route
+    #     user = self.request.user
+    #     return user.details.all()
 
     def get_queryset(self):
-        # Get the user object accessing the route
-        user = self.request.user
-        return user.details.all()
+        return Detail.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class PersonaListCreate(generics.ListCreateAPIView):
@@ -81,6 +93,7 @@ class PersonaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     """
     serializer_class = PersonaSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
         user = self.request.user
@@ -116,6 +129,7 @@ class PersonaDetailCreate(generics.CreateAPIView):
     queryset = PersonaDetail.objects.all()
     serializer_class = PersonaDetailSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
 
 class PersonaDetailsList(generics.ListAPIView):
@@ -139,6 +153,7 @@ class PersonaDetailsUnassigned(generics.ListAPIView):
     """
     serializer_class = DetailSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
         user = self.request.user
@@ -155,6 +170,7 @@ class PersonaDetails(APIView):
     # Only clients with API key
     # Or authenticated users can have this
     permission_classes = [HasPersonaAPIKey]
+    throttle_classes = [UserRateThrottle]
 
     def get(self, request, pk):
         if not pk:
@@ -195,6 +211,7 @@ class PersonaDetailDelete(generics.DestroyAPIView):
     queryset = PersonaDetail.objects.all()
     serializer_class = PersonaDetailSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get_object(self):
         """Get the PersonaDetail to delete"""
@@ -290,6 +307,7 @@ class APIKeyDestroy(generics.DestroyAPIView):
     queryset = PersonaAPIKey.objects.all()
     serializer_class = PersonaAPIKeySerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get_object(self):
         prefix = self.kwargs.get('prefix')
