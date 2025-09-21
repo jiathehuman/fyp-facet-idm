@@ -30,7 +30,6 @@ class DetailSerializerTest(TestCase):
 
     def test_01_fields_include_current_value_and_user_readonly(self):
         """Serializer exposes expected fields and marks 'user' as read-only."""
-        # Avoid DRF date->datetime assertion by nulling or using a pure date.
         instance = DetailFactory.create(
             user=self.user,
             date_value=None,
@@ -74,7 +73,7 @@ class DetailSerializerTest(TestCase):
             "key": "display name",
             "value_type": self.string_choice if self.string_choice else None,
             "string_value": "Bob",
-            "user": self.user.pk,  # should be ignored
+            "user": self.user.pk,
         }
         ser = DetailSerializer(data=payload)
         self.assertTrue(ser.is_valid(), msg=ser.errors)

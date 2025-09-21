@@ -1,5 +1,7 @@
 # Facet Identity Management Platform
-Facet Identity Management System is a secure and user-friendly identity management platform targetted at young adults to manage their diverse online identities.
+Facet Identity Management System is a secure and user-friendly identity management platform targetted at young adults to manage their diverse online identities. The application boasts a React frontend, a Django backend and a Postgresql database deployed to cloud on Railway.
+
+Through this platform, you can manage multiple online identities through personas.
 
 ## Running the application
 
@@ -27,7 +29,7 @@ To test:
 `npm run install` <br>
 `npm run dev` <br>
 
-Access the application at: (http://localhost:5173/)
+Access the application at: (http://localhost:5173/) <br>
 Interact with endpoints with Swagger at (http://127.0.0.1:8000/docs/)
 
 To test:
