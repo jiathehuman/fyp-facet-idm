@@ -1,6 +1,10 @@
 # Facet Identity Management Platform
+Facet Identity Management System is a secure and user-friendly identity management platform targetted at young adults to manage their diverse online identities.
 
 ## Running the application
+
+The application is best used with Firefox browser.
+
 ### Using Docker
 `docker compose up -d --build`
 
@@ -11,18 +15,17 @@ To test:
 `docker compose exec backend python manage.py test --settings=api.settings_test`
 
 ### Using backend and frontend commands
-`cd backend`
-`python -m venv .venv`
-`pip install -r requirements.txt`
-`source .venv/bin/activate`
-`python manage.py makemigrations`
-`python manage.py migrate
-`
-`python manage.py runserver`
+`cd backend` <br>
+`python -m venv .venv` <br>
+`pip install -r requirements.txt` <br>
+`source .venv/bin/activate` <br>
+`python manage.py makemigrations` <br>
+`python manage.py migrate` <br>
+`python manage.py runserver` <br>
 
-`cd frontend`
-`npm run install`
-`npm run dev`
+`cd frontend` <br>
+`npm run install` <br>
+`npm run dev` <br>
 
 Access the application at: (http://localhost:5173/)
 Interact with endpoints with Swagger at (http://127.0.0.1:8000/docs/)
